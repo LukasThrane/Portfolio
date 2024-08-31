@@ -27,7 +27,7 @@ export default function Footer() {
               <FaGithub className="w-6 h-6" />
             </a>
             <a
-              href="https://linkedin.com/in/LukasThrane"
+              href="https://linkedin.com/in/lukas-thrane/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-foreground hover:text-primary transition"
@@ -36,16 +36,7 @@ export default function Footer() {
               <FaLinkedin className="w-6 h-6" />
             </a>
             <a
-              href="https://twitter.com/LukasThrane"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground hover:text-primary transition"
-              aria-label="Twitter"
-            >
-              <FaTwitter className="w-6 h-6" />
-            </a>
-            <a
-              href="mailto:your.email@example.com"
+              href="mailto:lukas@thrane.name"
               className="text-foreground hover:text-primary transition"
               aria-label="Email"
             >

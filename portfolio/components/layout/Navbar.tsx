@@ -23,17 +23,14 @@ export default function Navbar() {
 
           {/* Menu Items */}
           <div className="hidden md:flex space-x-8">
-            <Link href="/" className="text-foreground hover:text-primary">
-              Home
-            </Link>
-            <Link href="/about" className="text-foreground hover:text-primary">
-              About
+            <Link href="/experience" className="text-foreground hover:text-primary">
+              Experience
             </Link>
             <Link
-              href="/services"
+              href="/projects"
               className="text-foreground hover:text-primary"
             >
-              Services
+              Projects
             </Link>
             <Link
               href="/contact"
@@ -62,12 +59,6 @@ export default function Navbar() {
         {isOpen && (
           <div className="md:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
-              <Link
-                href="/"
-                className="block text-foreground hover:bg-accent rounded-md px-3 py-2"
-              >
-                Home
-              </Link>
               <Link
                 href="/about"
                 className="block text-foreground hover:bg-accent rounded-md px-3 py-2"
