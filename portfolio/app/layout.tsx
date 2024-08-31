@@ -20,7 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-background`}>
+      <body
+        className={`${inter.className} bg-background flex flex-col min-h-screen`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -28,7 +30,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Navbar />
-          {children}
+          <main className="flex-grow">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+              {children}
+            </div>
+          </main>
           <Footer />
         </ThemeProvider>
       </body>
