@@ -19,8 +19,8 @@ export default function Home() {
           creating seamless user experiences with clean, maintainable code.
         </p>
         <p className="text-lg text-foreground leading-relaxed mt-4">
-          I'm passionate about learning new technologies, solving complex
-          problems, and continuously improving my skills. Let's connect and
+          I&apos;m passionate about learning new technologies, solving complex
+          problems, and continuously improving my skills. Let&apos;s connect and
           discuss how we can work together on your next project!
         </p>
         <div className="mt-8 flex justify-center md:justify-start space-x-4">
