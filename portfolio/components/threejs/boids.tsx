@@ -1,123 +1,72 @@
 "use client";
-import React, { useEffect, useRef } from "react";
-import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import React, { useState, useEffect } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
+import Boid from "./boid";
 
-export default function Boids() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+// Helper component to render boids inside the canvas
+function BoidsInCanvas() {
+  const { width, height } = useThree((state) => state.viewport);
+
+  // Store boid positions and velocities in state so they aren't reset on re-render
+  const [boidData, setBoidData] = useState<
+    { position: [number, number, number]; velocity: [number, number, number] }[]
+  >([]);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    // Function to generate random boid positions and velocities based on the viewport size
+    const generateBoidData = () => {
+      const speed = 0.02;
 
-    // Set up the scene, camera, and renderer
-    const scene = new THREE.Scene();
-    const aspectRatio = window.innerWidth / window.innerHeight;
+      const data = Array.from({ length: 10 }).map(() => {
+        const x = Math.random() * width - width / 2;
+        const y = Math.random() * height - height / 2;
+        const position: [number, number, number] = [x, y, 0];
 
-    /*
-    const camera = new THREE.OrthographicCamera(
-      -1 * aspectRatio,
-      1 * aspectRatio,
-      1,
-      -1,
-      0.1,
-      100,
-    );
-    */
-    const camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 100);
-    camera.position.z = 5;
+        // Generate a random angle between 0 and 2 * Math.PI (full circle)
+        const angle = Math.random() * 2 * Math.PI;
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvasRef.current,
-      alpha: true,
-      antialias: true,
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+        // Calculate velocity components based on the random angle
+        const velocityX = speed * Math.cos(angle);
+        const velocityY = speed * Math.sin(angle);
+        const velocity: [number, number, number] = [velocityX, velocityY, 0];
 
-    // OrbitControls setup
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; // Enable smooth motion
-    controls.dampingFactor = 0.05; // Inertia factor
-    controls.enableZoom = true; // Allow zooming
-    controls.enablePan = true; // Allow panning
-
-    // Create a simple cube mesh with a light-reactive material
-    const cubeMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(0.5, 0.5, 0.5),
-      new THREE.MeshStandardMaterial({ color: 0xff0000 }), // Use MeshStandardMaterial
-    );
-    scene.add(cubeMesh);
-
-    // Create a simple icosahedron mesh with a light-reactive material
-    const icosahedronMesh = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(1, 0),
-      new THREE.MeshStandardMaterial({ color: 0xffffff }), // Use MeshStandardMaterial
-    );
-    scene.add(icosahedronMesh);
-
-    const axesHelper = new THREE.AxesHelper(5);
-    scene.add(axesHelper);
-
-    // Initialize fog
-    const fogColor = new THREE.Color(0x060612);
-    const fog = new THREE.Fog(fogColor, 1, 20);
-    scene.fog = fog;
-    scene.background = new THREE.Color(fogColor);
-
-    // Initialize light
-    const light = new THREE.PointLight(0xffffff, 10);
-    light.position.set(3, 3, 3);
-    scene.add(light);
-
-    // Initialize the clock
-    const clock = new THREE.Clock();
-    let previousTime = 0;
-
-    // Animation loop
-    const animate = () => {
-      requestAnimationFrame(animate);
-
-      // Update controls for smooth animation
-      controls.update();
-
-      // Update the clock
-      const elapsedTime = clock.getElapsedTime();
-      const deltaTime = elapsedTime - previousTime;
-      previousTime = elapsedTime;
-
-      // Rotate the cube for some animation
-      cubeMesh.rotation.x += THREE.MathUtils.degToRad(1) * deltaTime * 20;
-      cubeMesh.rotation.y += THREE.MathUtils.degToRad(1) * deltaTime * 20;
-
-      // Move the cubeMesh
-      cubeMesh.position.x = Math.sin(clock.getElapsedTime()) * 2;
-      cubeMesh.position.z = Math.cos(clock.getElapsedTime()) * 2;
-
-      // Render the scene
-      renderer.render(scene, camera);
+        return { position, velocity };
+      });
+      setBoidData(data);
     };
-    animate();
 
-    // Handle window resizing
-    const handleResize = () => {
-      /*
-      const newAspectRatio = window.innerWidth / window.innerHeight;
-      camera.left = -1 * newAspectRatio;
-      camera.right = 1 * newAspectRatio;
-      */
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    };
-    window.addEventListener("resize", handleResize);
+    // Only generate data on the first render
+    if (boidData.length === 0) {
+      generateBoidData();
+    }
+  }, [width, height]); // Re-run if the screen size changes
 
-    // Clean up on unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      controls.dispose();
-      renderer.dispose();
-    };
-  }, []);
+  return (
+    <>
+      {boidData.map((data, index) => (
+        <Boid
+          key={index}
+          initialPosition={data.position}
+          initialVelocity={data.velocity}
+        />
+      ))}
+    </>
+  );
+}
 
-  return <canvas ref={canvasRef} />;
+export default function Boids() {
+  return (
+    <div className="w-full h-screen overflow-hidden">
+      <Canvas
+        orthographic
+        camera={{ position: [0, 0, 5], zoom: 100 }}
+        style={{ width: "100%", height: "100%" }}
+      >
+        {/* Add ambient light */}
+        <ambientLight />
+        {/* Render Boids inside the canvas */}
+        <BoidsInCanvas />
+      </Canvas>
+    </div>
+  );
 }
