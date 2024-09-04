@@ -2,15 +2,15 @@
 import React, { useState, useEffect } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import Boid from "./boid";
+import * as THREE from "three";
+import { BoidData } from "./boidBehaviors";
 
 // Helper component to render boids inside the canvas
 function BoidsInCanvas() {
   const { width, height } = useThree((state) => state.viewport);
 
   // Store boid positions and velocities in state so they aren't reset on re-render
-  const [boidData, setBoidData] = useState<
-    { position: [number, number, number]; velocity: [number, number, number] }[]
-  >([]);
+  const [boidData, setBoidData] = useState<BoidData[]>([]);
 
   useEffect(() => {
     // Function to generate random boid positions and velocities based on the viewport size
@@ -20,7 +20,7 @@ function BoidsInCanvas() {
       const data = Array.from({ length: 10 }).map(() => {
         const x = Math.random() * width - width / 2;
         const y = Math.random() * height - height / 2;
-        const position: [number, number, number] = [x, y, 0];
+        const position = new THREE.Vector3(x, y, 0);
 
         // Generate a random angle between 0 and 2 * Math.PI (full circle)
         const angle = Math.random() * 2 * Math.PI;
@@ -28,7 +28,7 @@ function BoidsInCanvas() {
         // Calculate velocity components based on the random angle
         const velocityX = speed * Math.cos(angle);
         const velocityY = speed * Math.sin(angle);
-        const velocity: [number, number, number] = [velocityX, velocityY, 0];
+        const velocity = new THREE.Vector3(velocityX, velocityY, 0);
 
         return { position, velocity };
       });
@@ -39,15 +39,16 @@ function BoidsInCanvas() {
     if (boidData.length === 0) {
       generateBoidData();
     }
-  }, [width, height]); // Re-run if the screen size changes
+  }, [width, height]);
 
   return (
     <>
       {boidData.map((data, index) => (
         <Boid
           key={index}
-          initialPosition={data.position}
-          initialVelocity={data.velocity}
+          initialPosition={data.position.toArray() as [number, number, number]}
+          initialVelocity={data.velocity.toArray() as [number, number, number]}
+          boidData={boidData}
         />
       ))}
     </>
