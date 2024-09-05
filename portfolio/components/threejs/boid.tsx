@@ -8,14 +8,26 @@ interface BoidProps {
   initialPosition: [number, number, number];
   initialVelocity: [number, number, number];
   boidData: BoidData[];
+  isGreen?: boolean;
+  separationDistance: number;
+  perceptionRadius: number;
+  maxForce: number;
+  maxSpeed: number;
 }
 
 export default function Boid({
   initialPosition,
   initialVelocity,
   boidData,
+  isGreen = false,
+  separationDistance,
+  perceptionRadius,
+  maxForce,
+  maxSpeed,
 }: BoidProps) {
   const boidRef = useRef<THREE.Mesh>(null);
+  const perceptionRef = useRef<THREE.Mesh>(null); // Ref for the perception radius
+  const separationRef = useRef<THREE.Mesh>(null); // Ref for the separation distance
   const [velocity] = useState<THREE.Vector3>(
     new THREE.Vector3(...initialVelocity),
   );
@@ -23,22 +35,32 @@ export default function Boid({
     new THREE.Vector3(),
   );
 
-  // Get viewport dimensions from useThree
   const { width, height } = useThree((state) => state.viewport);
-  const maxSpeed = 0.02; // Control max speed
-  const maxForce = 0.0001; // Control max force applied per frame
 
-  // Animate the boid
   useFrame(() => {
     if (boidRef.current) {
       const boid = { position: boidRef.current.position, velocity };
 
-      // Apply boid behaviors (separation, alignment, cohesion)
-      const separationForce = separation(boid, boidData, 2, maxForce);
-      const alignmentForce = alignment(boid, boidData, 2, maxForce, maxSpeed);
-      const cohesionForce = cohesion(boid, boidData, 2, maxForce);
+      const separationForce = separation(
+        boid,
+        boidData,
+        separationDistance,
+        maxForce,
+      );
+      const alignmentForce = alignment(
+        boid,
+        boidData,
+        perceptionRadius,
+        maxForce,
+        maxSpeed,
+      );
+      const cohesionForce = cohesion(
+        boid,
+        boidData,
+        perceptionRadius,
+        maxForce,
+      );
 
-      // Sum the forces to get total acceleration
       const totalAcceleration = new THREE.Vector3();
       totalAcceleration
         .add(separationForce)
@@ -46,35 +68,60 @@ export default function Boid({
         .add(cohesionForce);
       setAcceleration(totalAcceleration);
 
-      // Update velocity by adding acceleration
       velocity.add(acceleration);
       velocity.clampLength(0, maxSpeed);
-
-      // Update position
       boidRef.current.position.add(velocity);
 
-      // Update the rotation based on velocity
       boidRef.current.rotation.z = Math.atan2(-velocity.x, velocity.y);
 
-      // Screen wrapping: Check if the boid has moved outside the bounds of the screen
       if (boidRef.current.position.x > width / 2) {
-        boidRef.current.position.x = -width / 2; // Move to the left
+        boidRef.current.position.x = -width / 2;
       } else if (boidRef.current.position.x < -width / 2) {
-        boidRef.current.position.x = width / 2; // Move to the right
+        boidRef.current.position.x = width / 2;
+      }
+      if (boidRef.current.position.y > height / 2) {
+        boidRef.current.position.y = -height / 2;
+      } else if (boidRef.current.position.y < -height / 2) {
+        boidRef.current.position.y = height / 2;
       }
 
-      if (boidRef.current.position.y > height / 2) {
-        boidRef.current.position.y = -height / 2; // Move to the bottom
-      } else if (boidRef.current.position.y < -height / 2) {
-        boidRef.current.position.y = height / 2; // Move to the top
+      // Update the position of the perception and separation radius helpers
+      if (perceptionRef.current) {
+        perceptionRef.current.position.copy(boidRef.current.position);
+      }
+      if (separationRef.current) {
+        separationRef.current.position.copy(boidRef.current.position);
       }
     }
   });
 
   return (
-    <mesh ref={boidRef} position={initialPosition}>
-      <coneGeometry args={[0.1, 0.3, 8]} />
-      <meshStandardMaterial color={0xff0000} />
-    </mesh>
+    <>
+      {/* Boid */}
+      <mesh ref={boidRef} position={initialPosition}>
+        <coneGeometry args={[0.1, 0.3, 8]} />
+        <meshStandardMaterial color={isGreen ? 0x00ff00 : 0xff0000} />
+      </mesh>
+
+      {/* Perception radius (green circle around the boid for alignment/cohesion) */}
+      {isGreen && (
+        <mesh ref={perceptionRef}>
+          <ringGeometry
+            args={[perceptionRadius - 0.01, perceptionRadius, 32]} // Perception radius for alignment/cohesion
+          />
+          <meshBasicMaterial color={0x00ff00} opacity={0.3} transparent />
+        </mesh>
+      )}
+
+      {/* Separation distance (red circle around the boid for separation) */}
+      {isGreen && (
+        <mesh ref={separationRef}>
+          <ringGeometry
+            args={[separationDistance - 0.01, separationDistance, 32]} // Separation distance circle
+          />
+          <meshBasicMaterial color={0xff0000} opacity={0.5} transparent />
+        </mesh>
+      )}
+    </>
   );
 }
