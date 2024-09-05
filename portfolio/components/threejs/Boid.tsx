@@ -38,6 +38,7 @@ export default function Boid({
   const [acceleration, setAcceleration] = useState<THREE.Vector3>(
     new THREE.Vector3(),
   );
+  const [lines, setLines] = useState<THREE.Line[]>([]);
 
   const { width, height } = useThree((state) => state.viewport);
 
@@ -45,7 +46,11 @@ export default function Boid({
     if (boidRef.current) {
       const boid = { position: boidRef.current.position, velocity };
 
-      const separationForce = separation(boid, boidData, separationRadius);
+      const { steer: separationForce, neighbors: nearbyBoids } = separation(
+        boid,
+        boidData,
+        separationRadius,
+      );
       const alignmentForce = alignment(boid, boidData, alignmentRadius);
       const cohesionForce = cohesion(boid, boidData, cohesionRadius);
 
@@ -82,6 +87,21 @@ export default function Boid({
       if (cohesionRef.current) {
         cohesionRef.current.position.copy(boidRef.current.position);
       }
+
+      // Visualize lines between green boid and nearby boids in separation radius
+      if (isGreen) {
+        const newLines = nearbyBoids.map((neighborPos) => {
+          const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+          const points = [
+            boidRef.current!.position.clone(), // Non-null assertion here
+            neighborPos.clone(),
+          ];
+          const geometry = new THREE.BufferGeometry().setFromPoints(points);
+          return new THREE.Line(geometry, lineMaterial);
+        });
+
+        setLines(newLines); // Set the lines state
+      }
     }
   });
 
@@ -114,6 +134,10 @@ export default function Boid({
           <meshBasicMaterial color={0x0000ff} opacity={0.6} transparent />
         </mesh>
       )}
+
+      {/* Render the lines */}
+      {isGreen &&
+        lines.map((line, index) => <primitive key={index} object={line} />)}
     </>
   );
 }

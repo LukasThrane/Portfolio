@@ -11,18 +11,22 @@ export function separation(
   boid: BoidData,
   boids: BoidData[],
   separationRadius: number,
-): THREE.Vector3 {
+): { steer: THREE.Vector3; neighbors: THREE.Vector3[] } {
   let steer = new THREE.Vector3();
   let count = 0;
+  let neighbors: THREE.Vector3[] = [];
 
   boids.forEach((otherBoid) => {
     let distance = boid.position.distanceTo(otherBoid.position);
     if (distance > 0 && distance < separationRadius) {
+      // Add neighbor's position to the list for visualization
+      neighbors.push(otherBoid.position.clone());
+      
       count++;
     }
   });
 
-  return steer;
+  return { steer, neighbors };
 }
 
 // Alignment: Steer towards the average heading of neighbors
