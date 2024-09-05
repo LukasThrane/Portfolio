@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import BoidsInCanvas from "@/components/threejs/BoidsInCanvas";
+import { anaglyphPass } from "three/webgpu";
 
 export default function BoidsWithControls() {
   // State for behavior inputs
@@ -79,6 +80,7 @@ export default function BoidsWithControls() {
         <Canvas
           orthographic
           camera={{ position: [0, 0, 5], zoom: 100 }}
+          gl={{ antialias: true, alpha: true }}
           style={{ width: "100%", height: "100%" }}
           onCreated={(state) => state.gl.setClearColor("transparent", 0)}
         >

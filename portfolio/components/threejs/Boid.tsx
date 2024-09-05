@@ -87,7 +87,6 @@ export default function Boid({
 
   return (
     <>
-      {/* Boid */}
       <mesh ref={boidRef} position={initialPosition}>
         <coneGeometry args={[0.1, 0.3, 8]} />
         <meshStandardMaterial color={isGreen ? 0x00ff00 : 0xff0000} />
@@ -96,23 +95,23 @@ export default function Boid({
       {isGreen && (
         <mesh ref={separationRef}>
           <ringGeometry
-            args={[separationRadius - 0.01, separationRadius, 32]}
+            args={[separationRadius - 0.01, separationRadius, 64]}
           />
-          <meshBasicMaterial color={0xff0000} opacity={0.5} transparent />
+          <meshBasicMaterial color={0xff0000} opacity={0.7} transparent />
         </mesh>
       )}
 
       {isGreen && (
         <mesh ref={alignmentRef}>
-          <ringGeometry args={[alignmentRadius - 0.01, alignmentRadius, 32]} />
-          <meshBasicMaterial color={0x00ff00} opacity={0.3} transparent />
+          <ringGeometry args={[alignmentRadius - 0.01, alignmentRadius, 64]} />
+          <meshBasicMaterial color={0x00ff00} opacity={0.6} transparent />
         </mesh>
       )}
 
       {isGreen && (
         <mesh ref={cohesionRef}>
-          <ringGeometry args={[cohesionRadius - 0.01, cohesionRadius, 32]} />
-          <meshBasicMaterial color={0x0000ff} opacity={0.3} transparent />
+          <ringGeometry args={[cohesionRadius - 0.01, cohesionRadius, 64]} />
+          <meshBasicMaterial color={0x0000ff} opacity={0.6} transparent />
         </mesh>
       )}
     </>
