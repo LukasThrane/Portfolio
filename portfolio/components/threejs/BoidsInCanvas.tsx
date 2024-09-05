@@ -19,7 +19,7 @@ export default function BoidsInCanvas({
 }: BoidsInCanvasProps) {
   const [boidData, setBoidData] = useState<BoidData[]>([]);
 
-  // This effect only runs once to generate the initial positions and velocities
+  // Generate the initial positions and velocities
   useEffect(() => {
     const newBoidData: BoidData[] = [...Array(10)].map(() => {
       const position = new THREE.Vector3(
@@ -35,7 +35,7 @@ export default function BoidsInCanvas({
       return { position, velocity };
     });
     setBoidData(newBoidData);
-  }, []); // Empty dependency array ensures this only runs on the first render
+  }, []);
 
   return (
     <>
@@ -49,7 +49,7 @@ export default function BoidsInCanvas({
           perceptionRadius={perceptionRadius}
           maxForce={maxForce}
           maxSpeed={maxSpeed}
-          isGreen={index === 0} // Make the first boid green
+          isGreen={index === 0}
         />
       ))}
     </>

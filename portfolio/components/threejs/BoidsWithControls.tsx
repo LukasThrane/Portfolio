@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import BoidsInCanvas from "./BoidsInCanvas"; // Ensure this imports your BoidsInCanvas component
+import BoidsInCanvas from "./BoidsInCanvas";
 
 export default function BoidsWithControls() {
   // State for behavior inputs
@@ -25,7 +25,7 @@ export default function BoidsWithControls() {
           alignItems: "flex-end",
           gap: "0.5rem",
           padding: "0.5rem",
-          zIndex: 10, // Ensure the controls are on top of the canvas
+          zIndex: 10,
         }}
       >
         {/* Flex container for label and slider */}
@@ -42,7 +42,7 @@ export default function BoidsWithControls() {
             onChange={(e) =>
               setSeparationDistance(parseFloat(e.target.value))
             }
-            style={{ width: "120px", height: "1.2rem" }} // Same height for the slider
+            style={{ width: "120px", height: "1.2rem" }}
           />
         </div>
 
@@ -59,7 +59,7 @@ export default function BoidsWithControls() {
             onChange={(e) =>
               setPerceptionRadius(parseFloat(e.target.value))
             }
-            style={{ width: "120px", height: "1.2rem" }} // Same height for the slider
+            style={{ width: "120px", height: "1.2rem" }}
           />
         </div>
 
@@ -74,7 +74,7 @@ export default function BoidsWithControls() {
             step="0.00001"
             value={maxForce}
             onChange={(e) => setMaxForce(parseFloat(e.target.value))}
-            style={{ width: "120px", height: "1.2rem" }} // Same height for the slider
+            style={{ width: "120px", height: "1.2rem" }}
           />
         </div>
 
@@ -89,7 +89,7 @@ export default function BoidsWithControls() {
             step="0.01"
             value={maxSpeed}
             onChange={(e) => setMaxSpeed(parseFloat(e.target.value))}
-            style={{ width: "120px", height: "1.2rem" }} // Same height for the slider
+            style={{ width: "120px", height: "1.2rem" }}
           />
         </div>
       </div>
@@ -100,7 +100,7 @@ export default function BoidsWithControls() {
           orthographic
           camera={{ position: [0, 0, 5], zoom: 100 }}
           style={{ width: "100%", height: "100%" }}
-          onCreated={(state) => state.gl.setClearColor("transparent", 0)} // Set background to transparent
+          onCreated={(state) => state.gl.setClearColor("transparent", 0)}
         >
           {/* Add ambient light */}
           <ambientLight intensity={0.5} />

@@ -26,8 +26,8 @@ export default function Boid({
   maxSpeed,
 }: BoidProps) {
   const boidRef = useRef<THREE.Mesh>(null);
-  const perceptionRef = useRef<THREE.Mesh>(null); // Ref for the perception radius
-  const separationRef = useRef<THREE.Mesh>(null); // Ref for the separation distance
+  const perceptionRef = useRef<THREE.Mesh>(null);
+  const separationRef = useRef<THREE.Mesh>(null);
   const [velocity] = useState<THREE.Vector3>(
     new THREE.Vector3(...initialVelocity),
   );
