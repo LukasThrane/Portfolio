@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import BoidsInCanvas from "./BoidsInCanvas";
+import BoidsInCanvas from "@/components/threejs/BoidsInCanvas";
 
 export default function BoidsWithControls() {
   // State for behavior inputs

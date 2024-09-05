@@ -2,7 +2,7 @@
 import React, { useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { alignment, BoidData, cohesion, separation } from "./boidBehaviors";
+import { alignment, BoidData, cohesion, separation } from "@/components/threejs/boidBehaviors";
 
 interface BoidProps {
   initialPosition: [number, number, number];

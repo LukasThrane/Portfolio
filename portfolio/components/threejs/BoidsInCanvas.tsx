@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Boid from "./Boid";
-import { BoidData } from "./boidBehaviors";
+import Boid from "@/components/threejs/Boid";
+import { BoidData } from "@/components/threejs/boidBehaviors";
 import * as THREE from "three";
 
 interface BoidsInCanvasProps {
