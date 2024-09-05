@@ -5,17 +5,15 @@ import { BoidData } from "@/components/threejs/boidBehaviors";
 import * as THREE from "three";
 
 interface BoidsInCanvasProps {
-  separationDistance: number;
-  perceptionRadius: number;
-  maxForce: number;
-  maxSpeed: number;
+  separationRadius: number;
+  alignmentRadius: number;
+  cohesionRadius: number;
 }
 
 export default function BoidsInCanvas({
-  separationDistance,
-  perceptionRadius,
-  maxForce,
-  maxSpeed,
+  separationRadius,
+  alignmentRadius,
+  cohesionRadius,
 }: BoidsInCanvasProps) {
   const [boidData, setBoidData] = useState<BoidData[]>([]);
 
@@ -45,11 +43,10 @@ export default function BoidsInCanvas({
           initialPosition={data.position.toArray() as [number, number, number]}
           initialVelocity={data.velocity.toArray() as [number, number, number]}
           boidData={boidData}
-          separationDistance={separationDistance}
-          perceptionRadius={perceptionRadius}
-          maxForce={maxForce}
-          maxSpeed={maxSpeed}
           isGreen={index === 0}
+          separationRadius={separationRadius}
+          alignmentRadius={alignmentRadius}
+          cohesionRadius={cohesionRadius}
         />
       ))}
     </>

@@ -2,17 +2,21 @@
 import React, { useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { alignment, BoidData, cohesion, separation } from "@/components/threejs/boidBehaviors";
+import {
+  alignment,
+  BoidData,
+  cohesion,
+  separation,
+} from "@/components/threejs/boidBehaviors";
 
 interface BoidProps {
   initialPosition: [number, number, number];
   initialVelocity: [number, number, number];
   boidData: BoidData[];
   isGreen?: boolean;
-  separationDistance: number;
-  perceptionRadius: number;
-  maxForce: number;
-  maxSpeed: number;
+  separationRadius: number;
+  alignmentRadius: number;
+  cohesionRadius: number;
 }
 
 export default function Boid({
@@ -20,14 +24,14 @@ export default function Boid({
   initialVelocity,
   boidData,
   isGreen = false,
-  separationDistance,
-  perceptionRadius,
-  maxForce,
-  maxSpeed,
+  separationRadius,
+  alignmentRadius,
+  cohesionRadius,
 }: BoidProps) {
   const boidRef = useRef<THREE.Mesh>(null);
-  const perceptionRef = useRef<THREE.Mesh>(null);
   const separationRef = useRef<THREE.Mesh>(null);
+  const alignmentRef = useRef<THREE.Mesh>(null);
+  const cohesionRef = useRef<THREE.Mesh>(null);
   const [velocity] = useState<THREE.Vector3>(
     new THREE.Vector3(...initialVelocity),
   );
@@ -41,25 +45,9 @@ export default function Boid({
     if (boidRef.current) {
       const boid = { position: boidRef.current.position, velocity };
 
-      const separationForce = separation(
-        boid,
-        boidData,
-        separationDistance,
-        maxForce,
-      );
-      const alignmentForce = alignment(
-        boid,
-        boidData,
-        perceptionRadius,
-        maxForce,
-        maxSpeed,
-      );
-      const cohesionForce = cohesion(
-        boid,
-        boidData,
-        perceptionRadius,
-        maxForce,
-      );
+      const separationForce = separation(boid, boidData, separationRadius);
+      const alignmentForce = alignment(boid, boidData, alignmentRadius);
+      const cohesionForce = cohesion(boid, boidData, cohesionRadius);
 
       const totalAcceleration = new THREE.Vector3();
       totalAcceleration
@@ -69,7 +57,6 @@ export default function Boid({
       setAcceleration(totalAcceleration);
 
       velocity.add(acceleration);
-      velocity.clampLength(0, maxSpeed);
       boidRef.current.position.add(velocity);
 
       boidRef.current.rotation.z = Math.atan2(-velocity.x, velocity.y);
@@ -86,11 +73,14 @@ export default function Boid({
       }
 
       // Update the position of the perception and separation radius helpers
-      if (perceptionRef.current) {
-        perceptionRef.current.position.copy(boidRef.current.position);
-      }
       if (separationRef.current) {
         separationRef.current.position.copy(boidRef.current.position);
+      }
+      if (alignmentRef.current) {
+        alignmentRef.current.position.copy(boidRef.current.position);
+      }
+      if (cohesionRef.current) {
+        cohesionRef.current.position.copy(boidRef.current.position);
       }
     }
   });
@@ -103,23 +93,26 @@ export default function Boid({
         <meshStandardMaterial color={isGreen ? 0x00ff00 : 0xff0000} />
       </mesh>
 
-      {/* Perception radius (green circle around the boid for alignment/cohesion) */}
       {isGreen && (
-        <mesh ref={perceptionRef}>
+        <mesh ref={separationRef}>
           <ringGeometry
-            args={[perceptionRadius - 0.01, perceptionRadius, 32]} // Perception radius for alignment/cohesion
+            args={[separationRadius - 0.01, separationRadius, 32]}
           />
+          <meshBasicMaterial color={0xff0000} opacity={0.5} transparent />
+        </mesh>
+      )}
+
+      {isGreen && (
+        <mesh ref={alignmentRef}>
+          <ringGeometry args={[alignmentRadius - 0.01, alignmentRadius, 32]} />
           <meshBasicMaterial color={0x00ff00} opacity={0.3} transparent />
         </mesh>
       )}
 
-      {/* Separation distance (red circle around the boid for separation) */}
       {isGreen && (
-        <mesh ref={separationRef}>
-          <ringGeometry
-            args={[separationDistance - 0.01, separationDistance, 32]} // Separation distance circle
-          />
-          <meshBasicMaterial color={0xff0000} opacity={0.5} transparent />
+        <mesh ref={cohesionRef}>
+          <ringGeometry args={[cohesionRadius - 0.01, cohesionRadius, 32]} />
+          <meshBasicMaterial color={0x0000ff} opacity={0.3} transparent />
         </mesh>
       )}
     </>

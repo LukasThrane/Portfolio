@@ -5,10 +5,9 @@ import BoidsInCanvas from "@/components/threejs/BoidsInCanvas";
 
 export default function BoidsWithControls() {
   // State for behavior inputs
-  const [separationDistance, setSeparationDistance] = useState(1);
-  const [perceptionRadius, setPerceptionRadius] = useState(2);
-  const [maxForce, setMaxForce] = useState(0.0001);
-  const [maxSpeed, setMaxSpeed] = useState(0.02);
+  const [separationRadius, setSeparationRadius] = useState(1);
+  const [alignmentRadius, setAlignmentRadius] = useState(2);
+  const [cohesionRadius, setCohesionRadius] = useState(3);
 
   return (
     <div className="w-full h-screen relative">
@@ -31,64 +30,45 @@ export default function BoidsWithControls() {
         {/* Flex container for label and slider */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <span style={{ color: "#fff", fontSize: "0.8rem" }}>
-            Separation Distance: {separationDistance.toFixed(2)}
+            Separation Radius: {separationRadius.toFixed(2)}
           </span>
           <input
             type="range"
-            min="0.5"
-            max="5"
-            step="0.1"
-            value={separationDistance}
-            onChange={(e) =>
-              setSeparationDistance(parseFloat(e.target.value))
-            }
-            style={{ width: "120px", height: "1.2rem" }}
-          />
-        </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <span style={{ color: "#fff", fontSize: "0.8rem" }}>
-            Perception Radius: {perceptionRadius.toFixed(2)}
-          </span>
-          <input
-            type="range"
-            min="1"
+            min="0"
             max="10"
             step="0.1"
-            value={perceptionRadius}
-            onChange={(e) =>
-              setPerceptionRadius(parseFloat(e.target.value))
-            }
+            value={separationRadius}
+            onChange={(e) => setSeparationRadius(parseFloat(e.target.value))}
             style={{ width: "120px", height: "1.2rem" }}
           />
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <span style={{ color: "#fff", fontSize: "0.8rem" }}>
-            Max Force: {maxForce.toFixed(6)}
+            Alignment Radius: {alignmentRadius.toFixed(2)}
           </span>
           <input
             type="range"
-            min="0.00001"
-            max="0.001"
-            step="0.00001"
-            value={maxForce}
-            onChange={(e) => setMaxForce(parseFloat(e.target.value))}
+            min="0"
+            max="10"
+            step="0.1"
+            value={alignmentRadius}
+            onChange={(e) => setAlignmentRadius(parseFloat(e.target.value))}
             style={{ width: "120px", height: "1.2rem" }}
           />
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <span style={{ color: "#fff", fontSize: "0.8rem" }}>
-            Max Speed: {maxSpeed.toFixed(2)}
+            Cohesion Radius: {cohesionRadius.toFixed(2)}
           </span>
           <input
             type="range"
-            min="0.01"
-            max="0.1"
-            step="0.01"
-            value={maxSpeed}
-            onChange={(e) => setMaxSpeed(parseFloat(e.target.value))}
+            min="0"
+            max="10"
+            step="0.1"
+            value={cohesionRadius}
+            onChange={(e) => setCohesionRadius(parseFloat(e.target.value))}
             style={{ width: "120px", height: "1.2rem" }}
           />
         </div>
@@ -103,14 +83,13 @@ export default function BoidsWithControls() {
           onCreated={(state) => state.gl.setClearColor("transparent", 0)}
         >
           {/* Add ambient light */}
-          <ambientLight intensity={0.5} />
+          <ambientLight intensity={1} />
 
           {/* Pass behavior values to the boid system */}
           <BoidsInCanvas
-            separationDistance={separationDistance}
-            perceptionRadius={perceptionRadius}
-            maxForce={maxForce}
-            maxSpeed={maxSpeed}
+            separationRadius={separationRadius}
+            alignmentRadius={alignmentRadius}
+            cohesionRadius={cohesionRadius}
           />
         </Canvas>
       </div>
